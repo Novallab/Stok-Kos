@@ -10,11 +10,11 @@
     "api": "json-server --watch db.json --port 3000 --host 0.0.0.0"
   },
   "dependencies": {
-    "expo": "~57.0.26",
-    "expo-location": "~18.1.0",
-    "expo-sensors": "~14.1.0",
-    "expo-secure-store": "~57.0.4",
-    "expo-status-bar": "~57.0.1",
+    "expo": "~58.0.0",
+    "expo-location": "*",
+    "expo-sensors": "*",
+    "expo-secure-store": "*",
+    "expo-status-bar": "*",
     "react": "19.2.3",
     "react-native": "0.86.3"
   },
