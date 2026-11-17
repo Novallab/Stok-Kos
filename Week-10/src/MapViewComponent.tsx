@@ -1,14 +1,12 @@
 /**
  * MapViewComponent.tsx — Week 10 (Sprint 08: Maps SDK Integration)
  *
- * Komponen Peta Interaktif dengan:
- * - Peta OpenStreetMap langsung (Live Map)
+ * Komponen Peta Interaktif 100% Native:
+ * - Kompatibel murni dengan iOS, Android, dan Web (tanpa tag HTML iframe yang merusak iOS)
  * - Marker Pengguna (User Location)
- * - Marker Kos RoomCheck (Target Location)
- * - Visualisasi Lingkaran Geofence
- * - Kontrol Zoom & Center
- *
- * Bekerja mulus di Web Browser dan Mobile tanpa memerlukan Google API Key berbayar.
+ * - Marker Kos RoomCheck (Target Location UMM Malang)
+ * - Visualisasi Lingkaran Geofence (Radius 300m)
+ * - Kontrol Zoom & Re-Center
  */
 
 import React, { useState } from 'react';
@@ -17,8 +15,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Platform,
-  Dimensions,
 } from 'react-native';
 
 type Props = {
@@ -44,12 +40,6 @@ export default function MapViewComponent({
   const [activeCenter, setActiveCenter] = useState<'user' | 'target'>('user');
   const [activeMarkerInfo, setActiveMarkerInfo] = useState<string | null>(null);
 
-  const centerLat = activeCenter === 'user' ? userLat : targetLat;
-  const centerLng = activeCenter === 'user' ? userLng : targetLng;
-
-  // OpenStreetMap embed URL
-  const osmEmbedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${centerLng - 0.008}%2C${centerLat - 0.006}%2C${centerLng + 0.008}%2C${centerLat + 0.006}&layer=mapnik&marker=${userLat}%2C${userLng}`;
-
   return (
     <View style={styles.card}>
       {/* Header Peta */}
@@ -57,7 +47,7 @@ export default function MapViewComponent({
         <View style={{ flex: 1 }}>
           <Text style={styles.mapTitle}>🗺️ Peta Lokasi & Geofence</Text>
           <Text style={styles.mapSubtitle}>
-            OpenStreetMap Engine · Zoom Level: {zoom}
+            Area UMM Malang · Zoom: {zoom}x · Mode: {activeCenter === 'user' ? 'Lokasi Saya' : 'Kos Pusat'}
           </Text>
         </View>
         <View
@@ -77,84 +67,99 @@ export default function MapViewComponent({
         </View>
       </View>
 
-      {/* Frame Tampilan Peta */}
+      {/* Frame Tampilan Peta Murni Native */}
       <View style={styles.mapContainer}>
-        {Platform.OS === 'web' ? (
-          // Web View: Live Interactive OpenStreetMap
-          <iframe
-            title="OpenStreetMap View"
-            src={osmEmbedUrl}
-            style={{
-              width: '100%',
-              height: 280,
-              border: 0,
-              borderRadius: 12,
-            }}
-          />
-        ) : (
-          // Mobile Fallback: High-Fidelity Interactive Map Canvas
-          <View style={styles.mobileMapCanvas}>
-            {/* Grid Pattern Peta */}
-            <View style={styles.gridOverlay}>
-              <View style={styles.roadHorizontal} />
-              <View style={styles.roadVertical} />
-              <View style={styles.roadDiagonal} />
-            </View>
+        {/* Latar Belakang Area Peta (Land & Roads) */}
+        <View style={styles.mapCanvas}>
+          {/* Jalan Utama (Jl. Raya Tlogomas Malang) */}
+          <View style={styles.roadMain} />
+          <View style={styles.roadMainDash} />
+          <Text style={styles.roadLabel}>Jl. Raya Tlogomas</Text>
 
-            {/* Visualisasi Lingkaran Geofence */}
+          {/* Jalan Sekunder */}
+          <View style={styles.roadCross} />
+          <View style={styles.river} />
+          <Text style={styles.riverLabel}>Sungai Brantas</Text>
+
+          {/* Area Blok Bangunan Kampus UMM & Kos */}
+          <View style={styles.campusBlock}>
+            <Text style={styles.campusBlockText}>Kampus III UMM</Text>
+          </View>
+          <View style={styles.housingBlock}>
+            <Text style={styles.housingBlockText}>Area Kos-Kosan</Text>
+          </View>
+
+          {/* Visualisasi Lingkaran Geofence Virtual */}
+          <View
+            style={[
+              styles.geofenceCircle,
+              {
+                borderColor: isInsideGeofence ? '#10B981' : '#EF4444',
+                backgroundColor: isInsideGeofence
+                  ? 'rgba(16, 185, 129, 0.16)'
+                  : 'rgba(239, 68, 68, 0.12)',
+              },
+            ]}
+          >
             <View
               style={[
-                styles.geofenceCircle,
-                {
-                  borderColor: isInsideGeofence ? '#10B981' : '#EF4444',
-                  backgroundColor: isInsideGeofence
-                    ? 'rgba(16, 185, 129, 0.15)'
-                    : 'rgba(239, 68, 68, 0.12)',
-                },
+                styles.geofenceBadge,
+                { backgroundColor: isInsideGeofence ? '#ECFDF5' : '#FEF2F2' },
               ]}
             >
-              <Text style={styles.geofenceCircleLabel}>
-                Radius {geofenceRadius}m
+              <Text
+                style={[
+                  styles.geofenceCircleLabel,
+                  { color: isInsideGeofence ? '#047857' : '#B91C1C' },
+                ]}
+              >
+                Radius Geofence: {geofenceRadius}m
               </Text>
             </View>
-
-            {/* Marker Kos / Target */}
-            <TouchableOpacity
-              style={styles.targetMarkerContainer}
-              onPress={() =>
-                setActiveMarkerInfo(
-                  `${targetName}\nKoordinat: ${targetLat}, ${targetLng}`
-                )
-              }
-            >
-              <View style={styles.targetPin}>
-                <Text style={styles.targetPinIcon}>🏢</Text>
-              </View>
-              <Text style={styles.targetPinText}>Kos RoomCheck</Text>
-            </TouchableOpacity>
-
-            {/* Marker Lokasi Pengguna */}
-            <TouchableOpacity
-              style={[
-                styles.userMarkerContainer,
-                isInsideGeofence
-                  ? styles.userInsidePos
-                  : styles.userOutsidePos,
-              ]}
-              onPress={() =>
-                setActiveMarkerInfo(
-                  `Lokasi Anda\nLat: ${userLat.toFixed(5)}, Lng: ${userLng.toFixed(5)}`
-                )
-              }
-            >
-              <View style={styles.userPulseRing} />
-              <View style={styles.userPin}>
-                <Text style={styles.userPinIcon}>📍</Text>
-              </View>
-              <Text style={styles.userPinText}>Posisi Anda</Text>
-            </TouchableOpacity>
           </View>
-        )}
+
+          {/* Marker Kos / Target (🏢) */}
+          <TouchableOpacity
+            style={styles.targetMarkerContainer}
+            onPress={() =>
+              setActiveMarkerInfo(
+                `${targetName}\nKoordinat: ${targetLat}, ${targetLng}\nStatus: Area Inspeksi Aktif`
+              )
+            }
+          >
+            <View style={styles.targetPin}>
+              <Text style={styles.targetPinIcon}>🏢</Text>
+            </View>
+            <View style={styles.markerLabelContainer}>
+              <Text style={styles.targetPinText}>Kos RoomCheck</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Marker Lokasi Pengguna (📍) */}
+          <TouchableOpacity
+            style={[
+              styles.userMarkerContainer,
+              isInsideGeofence ? styles.userInsidePos : styles.userOutsidePos,
+            ]}
+            onPress={() =>
+              setActiveMarkerInfo(
+                `Posisi Anda\nLat: ${userLat.toFixed(5)}, Lng: ${userLng.toFixed(5)}\n${
+                  isInsideGeofence
+                    ? '✓ Terverifikasi di dalam area'
+                    : '✕ Di luar radius geofence'
+                }`
+              )
+            }
+          >
+            <View style={styles.userPulseRing} />
+            <View style={styles.userPin}>
+              <Text style={styles.userPinIcon}>📍</Text>
+            </View>
+            <View style={styles.markerLabelContainer}>
+              <Text style={styles.userPinText}>Posisi Saya</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
 
         {/* Floating Quick Action Buttons */}
         <View style={styles.floatingControls}>
@@ -165,7 +170,7 @@ export default function MapViewComponent({
             ]}
             onPress={() => {
               setActiveCenter('user');
-              setActiveMarkerInfo('Dipusatkan ke Lokasi Pengguna');
+              setActiveMarkerInfo('Kamera dipusatkan ke: Posisi Anda');
             }}
           >
             <Text style={styles.controlBtnIcon}>🎯</Text>
@@ -177,7 +182,7 @@ export default function MapViewComponent({
             ]}
             onPress={() => {
               setActiveCenter('target');
-              setActiveMarkerInfo(`Dipusatkan ke ${targetName}`);
+              setActiveMarkerInfo(`Kamera dipusatkan ke: ${targetName}`);
             }}
           >
             <Text style={styles.controlBtnIcon}>🏢</Text>
@@ -210,12 +215,12 @@ export default function MapViewComponent({
       {/* Legend & Keterangan Marker */}
       <View style={styles.legendRow}>
         <View style={styles.legendItem}>
-          <Text style={{ fontSize: 14 }}>📍</Text>
+          <Text style={{ fontSize: 13 }}>📍</Text>
           <Text style={styles.legendText}>Lokasi Saya</Text>
         </View>
         <View style={styles.legendItem}>
-          <Text style={{ fontSize: 14 }}>🏢</Text>
-          <Text style={styles.legendText}>Area Kos / UMM</Text>
+          <Text style={{ fontSize: 13 }}>🏢</Text>
+          <Text style={styles.legendText}>Area Kos RoomCheck</Text>
         </View>
         <View style={styles.legendItem}>
           <View
@@ -224,7 +229,7 @@ export default function MapViewComponent({
               { backgroundColor: isInsideGeofence ? '#10B981' : '#EF4444' },
             ]}
           />
-          <Text style={styles.legendText}>Geofence Ring</Text>
+          <Text style={styles.legendText}>Batas Geofence</Text>
         </View>
       </View>
     </View>
@@ -272,77 +277,132 @@ const styles = StyleSheet.create({
   },
   mapContainer: {
     position: 'relative',
-    height: 280,
+    height: 290,
     borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: '#E2E8F0',
   },
-  mobileMapCanvas: {
+  mapCanvas: {
     width: '100%',
     height: '100%',
     backgroundColor: '#E6F0FA',
+    position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
   },
-  gridOverlay: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  roadHorizontal: {
+  river: {
     position: 'absolute',
-    top: '48%',
+    top: 0,
+    bottom: 0,
+    left: '12%',
+    width: 24,
+    backgroundColor: '#93C5FD',
+  },
+  riverLabel: {
+    position: 'absolute',
+    left: '14%',
+    top: 20,
+    fontSize: 8,
+    color: '#1E40AF',
+    fontWeight: '700',
+    transform: [{ rotate: '90deg' }],
+  },
+  roadMain: {
+    position: 'absolute',
     left: 0,
     right: 0,
-    height: 14,
+    top: '52%',
+    height: 22,
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: '#CBD5E1',
   },
-  roadVertical: {
+  roadMainDash: {
     position: 'absolute',
-    left: '46%',
+    left: 0,
+    right: 0,
+    top: '56%',
+    height: 2,
+    borderStyle: 'dashed',
+    borderWidth: 1,
+    borderColor: '#F59E0B',
+  },
+  roadLabel: {
+    position: 'absolute',
+    left: 80,
+    top: '53%',
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#475569',
+  },
+  roadCross: {
+    position: 'absolute',
     top: 0,
     bottom: 0,
-    width: 14,
+    left: '48%',
+    width: 16,
     backgroundColor: '#FFFFFF',
     borderLeftWidth: 1,
     borderRightWidth: 1,
     borderColor: '#CBD5E1',
   },
-  roadDiagonal: {
+  campusBlock: {
     position: 'absolute',
-    width: '120%',
-    height: 10,
-    top: '20%',
-    left: '-10%',
-    backgroundColor: '#FFFBEB',
-    transform: [{ rotate: '25deg' }],
+    top: 24,
+    left: '36%',
+    backgroundColor: '#E0E7FF',
+    borderWidth: 1,
+    borderColor: '#A5B4FC',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  campusBlockText: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#3730A3',
+  },
+  housingBlock: {
+    position: 'absolute',
+    bottom: 24,
+    right: '20%',
+    backgroundColor: '#FEF3C7',
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  housingBlockText: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#92400E',
   },
   geofenceCircle: {
-    width: 190,
-    height: 190,
-    borderRadius: 95,
+    width: 210,
+    height: 210,
+    borderRadius: 105,
     borderWidth: 2,
     borderStyle: 'dashed',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingTop: 8,
+    paddingTop: 6,
+  },
+  geofenceBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
   },
   geofenceCircleLabel: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#047857',
-    backgroundColor: '#ECFDF5',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
   },
   targetMarkerContainer: {
     position: 'absolute',
     alignItems: 'center',
-    top: '40%',
-    left: '42%',
+    top: '42%',
+    left: '45%',
   },
   targetPin: {
     backgroundColor: '#1E40AF',
@@ -355,26 +415,31 @@ const styles = StyleSheet.create({
   targetPinIcon: {
     fontSize: 16,
   },
-  targetPinText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#1E40AF',
+  markerLabelContainer: {
     backgroundColor: 'rgba(255,255,255,0.95)',
-    paddingHorizontal: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
     borderRadius: 4,
     marginTop: 2,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  targetPinText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#1E40AF',
   },
   userMarkerContainer: {
     position: 'absolute',
     alignItems: 'center',
   },
   userInsidePos: {
-    top: '46%',
-    left: '52%',
+    top: '48%',
+    left: '54%',
   },
   userOutsidePos: {
-    top: '76%',
-    left: '70%',
+    top: '78%',
+    left: '74%',
   },
   userPulseRing: {
     position: 'absolute',
@@ -397,12 +462,8 @@ const styles = StyleSheet.create({
   },
   userPinText: {
     fontSize: 10,
-    fontWeight: '700',
+    fontWeight: '800',
     color: '#1A56DB',
-    backgroundColor: 'rgba(255,255,255,0.95)',
-    paddingHorizontal: 4,
-    borderRadius: 4,
-    marginTop: 2,
   },
   floatingControls: {
     position: 'absolute',
@@ -455,6 +516,7 @@ const styles = StyleSheet.create({
     color: '#1E40AF',
     fontWeight: '600',
     flex: 1,
+    lineHeight: 18,
   },
   markerInfoClose: {
     fontSize: 14,

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Accelerometer, Gyroscope, Magnetometer } from 'expo-sensors';
-import type { Subscription } from 'expo-sensors';
+
+type Subscription = { remove: () => void };
 
 // ---------- Types ----------
 export type SensorVec3 = { x: number; y: number; z: number };
