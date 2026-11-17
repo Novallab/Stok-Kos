@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "RoomCheck Week 5 - Sprint 04",
+    "slug": "roomcheck-week5",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#1E40AF"
+    },
+    "ios": { "supportsTablet": true },
+    "android": { "adaptiveIcon": { "backgroundColor": "#1E40AF" } },
+    "plugins": ["expo-secure-store"]
+  }
+}

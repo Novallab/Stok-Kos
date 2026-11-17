@@ -1,0 +1,10 @@
+{
+  "rooms": [
+    { "id": 1, "nama_kamar": "A01", "tipe": "Standar", "status": "terisi", "penghuni": "Budi Santoso", "created_at": "2026-01-01", "updated_at": "2026-10-01" },
+    { "id": 2, "nama_kamar": "A02", "tipe": "Standar", "status": "kosong", "penghuni": null, "created_at": "2026-01-01", "updated_at": "2026-09-20" },
+    { "id": 3, "nama_kamar": "A03", "tipe": "Standar", "status": "perlu_dibersihkan", "penghuni": "Rina Wulandari", "created_at": "2026-01-01", "updated_at": "2026-10-05" },
+    { "id": 4, "nama_kamar": "B01", "tipe": "AC", "status": "terisi", "penghuni": "Dewi Lestari", "created_at": "2026-01-01", "updated_at": "2026-10-02" },
+    { "id": 5, "nama_kamar": "B02", "tipe": "AC", "status": "rusak", "penghuni": null, "created_at": "2026-01-01", "updated_at": "2026-10-05" },
+    { "id": 6, "nama_kamar": "B03", "tipe": "AC", "status": "kosong", "penghuni": null, "created_at": "2026-01-01", "updated_at": "2026-09-15" }
+  ]
+}

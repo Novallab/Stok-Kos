@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "RoomCheck Week 2 - Sprint 01",
+    "slug": "roomcheck-week2",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#1E40AF"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1E40AF"
+      }
+    }
+  }
+}

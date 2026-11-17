@@ -1,0 +1,24 @@
+{
+  "rooms": [
+    { "id": 1, "nama_kamar": "A01", "tipe": "Standard", "status": "terisi", "penghuni": "Budi Santoso", "created_at": "2024-01-10", "updated_at": "2024-11-01" },
+    { "id": 2, "nama_kamar": "A02", "tipe": "Standard", "status": "kosong", "penghuni": null, "created_at": "2024-01-10", "updated_at": "2024-11-01" },
+    { "id": 3, "nama_kamar": "B01", "tipe": "Deluxe", "status": "perlu_dibersihkan", "penghuni": null, "created_at": "2024-01-10", "updated_at": "2024-11-02" },
+    { "id": 4, "nama_kamar": "B02", "tipe": "Deluxe", "status": "terisi", "penghuni": "Siti Rahayu", "created_at": "2024-01-10", "updated_at": "2024-11-01" },
+    { "id": 5, "nama_kamar": "C01", "tipe": "VIP", "status": "rusak", "penghuni": null, "created_at": "2024-01-10", "updated_at": "2024-11-03" },
+    { "id": 6, "nama_kamar": "C02", "tipe": "VIP", "status": "kosong", "penghuni": null, "created_at": "2024-01-10", "updated_at": "2024-11-01" }
+  ],
+  "reports": [
+    { "id": 1, "kamar": "B01", "masalah": "AC tidak dingin", "status": "pending", "tanggal": "2024-11-02" },
+    { "id": 2, "kamar": "C01", "masalah": "Kunci pintu rusak", "status": "selesai", "tanggal": "2024-11-01" },
+    { "id": 3, "kamar": "A01", "masalah": "Lampu mati", "status": "proses", "tanggal": "2024-11-03" }
+  ],
+  "history": [
+    { "id": 1, "kamar": "A01", "aksi": "Pembersihan rutin", "petugas": "Ahmad", "tanggal": "2024-11-01" },
+    { "id": 2, "kamar": "B01", "aksi": "Pembersihan mendalam", "petugas": "Dewi", "tanggal": "2024-11-02" },
+    { "id": 3, "kamar": "C02", "aksi": "Pembersihan rutin", "petugas": "Ahmad", "tanggal": "2024-11-03" }
+  ],
+  "users": [
+    { "id": 1, "username": "admin", "password": "admin123", "role": "admin" },
+    { "id": 2, "username": "petugas", "password": "petugas123", "role": "staff" }
+  ]
+}

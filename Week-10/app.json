@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "RoomCheck Week 10",
+    "slug": "roomcheck-week10",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1a56db"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.roomcheck.week10",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "RoomCheck membutuhkan akses GPS untuk verifikasi posisi di area kos dan geofencing inspeksi."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1a56db"
+      },
+      "package": "com.roomcheck.week10",
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.HIGH_SAMPLING_RATE_SENSORS",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Izinkan RoomCheck mengakses lokasi untuk fitur verifikasi lokasi kos dan geofencing."
+        }
+      ],
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Izinkan RoomCheck mengakses sensor gerak untuk fitur dashboard sensor."
+        }
+      ]
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
